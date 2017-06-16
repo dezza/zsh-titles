@@ -11,19 +11,19 @@ function update_title() {
   # remove newlines
   a=${a//$'\n'/}
   if [[ -n "$TMUX" ]]; then
-    print -n "\ek${(%)a}:${(%)2}\e\\"
+    print -n "\ek${(%)a}${(%)2}\e\\"
   elif [[ "$TERM" =~ "screen*" ]]; then
-    print -n "\ek${(%)a}:${(%)2}\e\\"
+    print -n "\ek${(%)a}${(%)2}\e\\"
   elif [[ "$TERM" =~ "xterm*" ]]; then
-    print -n "\e]0;${(%)a}:${(%)2}\a"
+    print -n "\e]0;${(%)a}${(%)2}\a"
   elif [[ "$TERM" =~ "^rxvt-unicode.*" ]]; then
-    printf '\33]2;%s:%s\007' ${(%)a} ${(%)2}
+    printf '\33]2;%s%s\007' ${(%)a} ${(%)2}
   fi
 }
 
 # called just before the prompt is printed
 function _zsh_title__precmd() {
-  update_title "zsh" "%20<...<%~"
+  update_title "zsh" "[%~]\(%n@%m\)"
 }
 
 # called just before a command is executed
@@ -38,7 +38,7 @@ function _zsh_title__preexec() {
     fg)	cmd="${(z)jobtexts[${(Q)cmd[2]:-%+}]}" ;;
     %*)	cmd="${(z)jobtexts[${(Q)cmd[1]:-%+}]}" ;;
   esac
-  update_title "$cmd" "%20<...<%~"
+  update_title "$cmd" "%~"
 }
 
 autoload -Uz add-zsh-hook
